@@ -107,3 +107,61 @@
         - DB name should be wikiDB
         - Collection name is articles 
         - Document has 2 fields: title and content
+
+
+7. Find an Article (GET)
+    - using app.get request
+        - Submit a find, to find all articles
+        - go to localhost:3000/articles to trigger GET request and see the console log of the results
+        - add res.send(results) and now the page will return the results like we've seen with APIs
+```
+app.get("/articles", function (req, res) {
+    Article.find({}, function (err, results) {
+        if (!err){
+        console.log(results)
+        res.send(results)
+    }else{
+        console.log(err)
+        res.send(err)
+    }})
+})
+```
+
+8. Create a new Article (POST)
+
+    - This one is tricky because the client needs to send data to the server and we don't have a frontend
+    - We can use a TOOL called PostMAN to send and test our API without needing a frontend at all
+    - Create the app.post with "/articles" as per the POST methodology
+        - add console.log req.body title and content
+    - Make a post on Postman and you should see the logs of the post
+    - Cool! Now we need it to save to the DB though
+    - Declare new const newArticle and use new keyword to assign to Article Model.
+    - add req.body title and content for required fields
+    - call save method on newArticle
+    - Test by Submitting a post via postman again
+    - Confirm via get request or robo3t
+    - Add data validation so postman doesn't hange
+        - Inside the save method we can add a callback
+   
+
+```
+app.post("/articles", function (req, res) {
+console.log(req.body.title);
+console.log(req.body.content);
+
+
+const newArticle = new Article({
+    title: req.body.title,
+    content: req.body.content
+});
+
+newArticle.save(function(err){
+    if (!err){
+        res.send("Sucessfully added a new article")
+    } else {
+        res.send(err)
+    }
+});
+
+});
+```

@@ -24,11 +24,38 @@ const articleSchema = {
 
 const Article = mongoose.model("Article", articleSchema);
 
-// app.get("/", function(req, res ){
-//     Article.find({}, function (err, foundItems) {
-//         console.log(foundItems)
-//     })
-// }
+
+app.get("/articles", function (req, res) {
+    Article.find({}, function (err, results) {
+        if (!err){
+        console.log(results)
+        res.send(results)
+    }else{
+        console.log(err)
+        res.send(err)
+    }})
+})
+
+app.post("/articles", function (req, res) {
+console.log(req.body.title);
+console.log(req.body.content);
+
+
+const newArticle = new Article({
+    title: req.body.title,
+    content: req.body.content
+});
+
+newArticle.save(function(err){
+    if (!err){
+        res.send("Sucessfully added a new article")
+    } else {
+        res.send(err)
+    }
+});
+
+});
+
 
 let port = process.env.PORT;
 if(port == null || port == ""){
