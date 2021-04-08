@@ -24,8 +24,11 @@ const articleSchema = {
 
 const Article = mongoose.model("Article", articleSchema);
 
+//////////////////////Requests Targetting ALL Articles ///////////////////////
 
-app.get("/articles", function (req, res) {
+app.route("/articles")
+
+.get(function (req, res) {
     Article.find({}, function (err, results) {
         if (!err){
         console.log(results)
@@ -36,7 +39,7 @@ app.get("/articles", function (req, res) {
     }})
 })
 
-app.post("/articles", function (req, res) {
+.post(function (req, res) {
 console.log(req.body.title);
 console.log(req.body.content);
 
@@ -54,6 +57,60 @@ newArticle.save(function(err){
     }
 });
 
+})
+
+.delete(function(req, res){
+    Article.deleteMany(function (err){
+        if (!err){
+            res.send("Delete Successful")
+        } else {
+            res.send(err)
+        }
+    })
+})
+
+
+//////////////////////Requests Targetting Specific Articles ///////////////////////
+
+app.route("/articles/:articleTitle")
+
+.get(function (req, res) {
+    Article.findOne({title: req.params.articleTitle }, function (err, foundArticle) {
+        if (foundArticle){
+            res.send(foundArticle)
+        } else {
+            res.send("No Articles Found")
+        }
+    })
+})
+
+
+.put(function (req, res){
+    Article.updateOne(
+        {title: req.params.articleTitle},
+        {title: req.body.title, content: req.body.content},
+        {overwrite:true}, function (err) {
+        if (!err){
+            res.send("Successfully Updated")
+        }
+    })
+})
+
+.patch(function (req, res) {
+
+
+
+  Article.updateOne(
+    {title: req.params.articleTitle}, 
+    {$set: req.body},
+    function(err){
+        if(!err){
+            res.send("Successfully Updated")
+        } else {
+            res.send(err)
+        }
+    }
+  )  
 });
 
 

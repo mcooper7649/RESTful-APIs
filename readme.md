@@ -165,3 +165,176 @@ newArticle.save(function(err){
 
 });
 ```
+
+
+9. Delete All articles (Delete)
+---
+
+- Declare app.delete with a route and callback
+
+```
+app.delete("/articles", function(req, res){
+    Article.deleteMany(function (err){
+        if (!err){
+            res.send("Delete Successful")
+        } else {
+            res.send(err)
+        }
+    })
+})
+
+```
+
+10. Chainable Route Handlers
+---
+- app.route()
+    - This allows you to create chainable route handlers to help reduce redundancy and typos. This is a feature of Expresss
+    -
+
+```
+
+app.route("/articles")
+
+.get(function (req, res) {
+    Article.find({}, function (err, results) {
+        if (!err){
+        console.log(results)
+        res.send(results)
+    }else{
+        console.log(err)
+        res.send(err)
+    }})
+})
+
+.post(function (req, res) {
+console.log(req.body.title);
+console.log(req.body.content);
+
+
+const newArticle = new Article({
+    title: req.body.title,
+    content: req.body.content
+});
+
+newArticle.save(function(err){
+    if (!err){
+        res.send("Sucessfully added a new article")
+    } else {
+        res.send(err)
+    }
+});
+
+})
+
+.delete(function(req, res){
+    Article.deleteMany(function (err){
+        if (!err){
+            res.send("Delete Successful")
+        } else {
+            res.send(err)
+        }
+    })
+})
+
+```
+
+11. Get request Challenge
+---
+
+- Create a get request, using the app.route chaining method we just learned.
+
+
+```
+
+app.route("/articles")
+
+.get(function (req, res) {
+    
+})
+
+```
+
+12. Getting a Single Article
+---
+
+- Route parameters are named URL segments that are used to capture the values specified at the their position in the URL. The captured values are populated in the req.params object
+
+Route path: /users/:userId/books/:bookId
+Request URL: http://localhost:3000/users/34/books/8989
+req.params: {"usersId": "34", "bookId": "909"}
+
+
+```
+app.get('/users/:userId/books/:bookId', function(req,res){
+    res.send(req.params)
+})
+
+```
+
+```
+app.route("/articles/:articleTitle")
+
+.get(function (req, res) {
+    Article.findOne({title: req.params.articleTitle }, function (err, foundArticle) {
+        if (foundArticle){
+            res.send(foundArticle)
+        } else {
+            res.send("No Articles Found")
+        }
+    })
+});
+```
+
+
+12. Put Request on a Specific Article
+---
+
+- This is updates a specific article
+- We can chain our put method onto our app.route but we must remember to remove the ; from the get method or the chain will break
+- Remember a put request will destroy and replace a document, if ALL the previous fields weren't put in the req.body, those fields will be empty.
+
+
+```
+.put(function (req, res){
+    Article.updateOne(
+        {title: req.params.articleTitle},
+        {title: req.body.title, content: req.body.content},
+        {overwrite:true}, function (err) {
+        if (!err){
+            res.send("Successfully Updated")
+        }
+    })
+});
+```
+
+
+12. Patch Request on a Specific Article
+---
+- This is updates a specific article
+- Patch allows us to update a single property without actually replacing the document like put does.
+- We can chain our patch method onto our app.route but we must remember to remove the ; from the get method or the chain will break
+- {overwrite:true} will be removed as this interferes with patch
+- {$set: updates} will replace overwrite and it lets us specify what the fields and value changes are
+- {$set: {title: "Chuck Norris", content: "Baddest MOFO alive"}}
+    - This example shows how to use set to specify data properties
+- $set: req.body // This allows us to pull the body parsed data the user submits to update
+
+
+```
+.patch(function (req, res) {
+
+
+
+  Article.updateOne(
+    {title: req.params.articleTitle}, 
+    {$set: req.body},
+    function(err){
+        if(!err){
+            res.send("Successfully Updated")
+        } else {
+            res.send(err)
+        }
+    }
+  )  
+});
+```
