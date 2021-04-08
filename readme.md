@@ -338,3 +338,25 @@ app.route("/articles/:articleTitle")
   )  
 });
 ```
+
+13. Delete a Specific Article
+---
+
+- We can chain the delete method and use the express method deleteOne on the Article Model
+- Using the requests params we can search for the title
+- Make sure to add data validation
+
+```
+.delete(function (req, res) {
+    Article.deleteOne(
+        {title: req.params.articleTitle},function (err) {
+            if (!err){
+                res.send("Successfully Deleted Article")
+            } else {
+                res.send(err)
+            }
+        }
+
+        )
+});
+```

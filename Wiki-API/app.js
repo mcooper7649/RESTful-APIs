@@ -111,6 +111,19 @@ app.route("/articles/:articleTitle")
         }
     }
   )  
+})
+
+.delete(function (req, res) {
+    Article.deleteOne(
+        {title: req.params.articleTitle},function (err) {
+            if (!err){
+                res.send("Successfully Deleted Article")
+            } else {
+                res.send(err)
+            }
+        }
+
+        )
 });
 
 
